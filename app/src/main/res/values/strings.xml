@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">FFBF</string>
+    <string name="email">Enter Email</string>
+    <string name="password">Enter Password</string>
+    <string name="first_name">Enter First Name</string>
+    <string name="surname">Enter Surname</string>
+    <string name="user_name">Enter Username</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">SignUp</string>
+    <string name="sign_out">SignOut</string>
+    <string name="update">Update</string>
+    <string name="dummy_text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.\n \nNulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a,</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_data">No Data</string>
+    <string name="add_critic">Add Critic</string>
+    <string name="view_reviews">View Reviews</string>
+    <string name="reservation">Reservation</string>
+    <string name="review">Restaurant is good having find food while prices are on the higher side. Overall its always good to visit there</string>
+    <string name="add_review">Add Review</string>
+    <string name="add_restaurant">Add Restaurant</string>
+    <string name="restaurant_info">Restaurant Info</string>
+    <string name="restaurant_name">Restaurant Name</string>
+    <string name="delete">Delete</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="view_profiles">View Profiles</string>
+    <string name="add_street_food">Add Street Food</string>
+    <string name="stall_name">Stall Name</string>
+    <string name="stall_location">Stall Location</string>
+    <string name="vegetarian">Vegetarian</string>
+    <string name="non_vegetarian">Non-Vegetarian</string>
+    <string name="stall_info">Stall Info</string>
+    <string name="location">Location</string>
+</resources>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.StreetStallDetailActivity">
+
+
+    <ImageView
+        android:id="@+id/imageView_streetStallImage"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="@dimen/_75sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:background="@drawable/drawable_circle"
+        android:padding="@dimen/_20sdp"
+        android:src="@drawable/ic_restaurant"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_streetStallName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="China Town"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/_32ssp"
+        app:layout_constraintLeft_toLeftOf="@id/imageView_streetStallImage"
+        app:layout_constraintRight_toRightOf="@id/imageView_streetStallImage"
+        app:layout_constraintTop_toBottomOf="@id/imageView_streetStallImage" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintLeft_toLeftOf="@id/textView_streetStallName"
+        app:layout_constraintRight_toRightOf="@id/textView_streetStallName"
+        app:layout_constraintTop_toBottomOf="@id/textView_streetStallName">
+
+        <TextView
+            android:id="@+id/textView_streetStallLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:text="@string/location"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/textView_addReview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:background="@drawable/drawable_rectangle"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:text="@string/add_review"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textView_streetStallFoodType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:text="@string/vegetarian"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent" />
+    </LinearLayout>
+
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150sdp"
+        android:padding="@dimen/_5sdp"
+        app:layout_constraintLeft_toLeftOf="@id/linearLayout"
+        app:layout_constraintRight_toRightOf="@id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout">
+
+        <TextView
+            android:id="@+id/textView_streetStallInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_24sdp"
+            android:text="@string/dummy_text" />
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/textView_reviewHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:text="Reviews"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="@id/scrollView"
+        app:layout_constraintRight_toRightOf="@id/scrollView"
+        app:layout_constraintTop_toBottomOf="@id/scrollView" />
+
+    <include
+        layout="@layout/layout_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/textView_reviewHeading"
+        app:layout_constraintRight_toRightOf="@id/textView_reviewHeading"
+        app:layout_constraintTop_toBottomOf="@id/textView_reviewHeading" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

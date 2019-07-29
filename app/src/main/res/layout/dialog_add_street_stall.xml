@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/imageView_stallImage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_160sdp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="@id/constraintLayout"
+                app:layout_constraintStart_toStartOf="@id/constraintLayout"
+                app:layout_constraintTop_toTopOf="@id/constraintLayout" />
+
+            <TextView
+                android:id="@+id/textView_uploadImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload Image"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintBottom_toBottomOf="@id/imageView_stallImage"
+                app:layout_constraintLeft_toLeftOf="@id/imageView_stallImage"
+                app:layout_constraintRight_toRightOf="@id/imageView_stallImage"
+                app:layout_constraintTop_toTopOf="@id/imageView_stallImage" />
+
+            <TextView
+                android:id="@+id/textView_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/add_street_food"
+                android:textColor="@color/colorAccent"
+                android:textSize="22sp"
+                app:layout_constraintLeft_toLeftOf="@id/imageView_stallImage"
+                app:layout_constraintRight_toRightOf="@id/imageView_stallImage"
+                app:layout_constraintTop_toBottomOf="@id/imageView_stallImage" />
+
+            <EditText
+                android:id="@+id/editText_stallName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_48sdp"
+                android:layout_marginLeft="@dimen/_48sdp"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:layout_marginEnd="@dimen/_48sdp"
+                android:layout_marginRight="@dimen/_48sdp"
+                android:background="@drawable/drawable_edit_text"
+                android:hint="@string/stall_name"
+                app:layout_constraintEnd_toEndOf="@+id/textView_heading"
+                app:layout_constraintStart_toStartOf="@+id/textView_heading"
+                app:layout_constraintTop_toBottomOf="@+id/textView_heading" />
+
+            <EditText
+                android:id="@+id/editText_stallLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_48sdp"
+                android:layout_marginLeft="@dimen/_48sdp"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:layout_marginEnd="@dimen/_48sdp"
+                android:layout_marginRight="@dimen/_48sdp"
+                android:background="@drawable/drawable_edit_text"
+                android:hint="@string/stall_location"
+                app:layout_constraintLeft_toLeftOf="@id/editText_stallName"
+                app:layout_constraintRight_toRightOf="@id/editText_stallName"
+                app:layout_constraintTop_toBottomOf="@id/editText_stallName" />
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="@id/editText_stallLocation"
+                app:layout_constraintRight_toRightOf="@id/editText_stallLocation"
+                app:layout_constraintTop_toBottomOf="@id/editText_stallLocation">
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radioButton_veg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/colorAccent"
+                    android:checked="true"
+                    android:text="@string/vegetarian" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/radioButton_nonVeg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/colorAccent"
+                    android:text="@string/non_vegetarian" />
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/editText_streetStallInfo"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/drawable_edit_text"
+                android:hint="@string/stall_info"
+                app:layout_constraintLeft_toLeftOf="@id/radioGroup"
+                app:layout_constraintRight_toRightOf="@id/radioGroup"
+                app:layout_constraintTop_toBottomOf="@id/radioGroup" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

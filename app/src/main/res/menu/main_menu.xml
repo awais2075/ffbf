@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/item_viewProfiles"
+        android:title="@string/view_profiles" />
+    <item
+        android:id="@+id/item_addCritic"
+        android:title="@string/add_critic"
+        android:visible="false" />
+    <item
+        android:id="@+id/item_signOut"
+        android:title="@string/sign_out" />
+</menu>
