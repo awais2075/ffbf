@@ -4,9 +4,11 @@ package com.android.ffbf.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -23,6 +25,7 @@ import com.android.ffbf.model.Review;
 import com.android.ffbf.model.StreetStall;
 import com.android.ffbf.model.User;
 import com.android.ffbf.util.Util;
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -34,17 +37,17 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
 
     private StreetStall streetStall;
 
-    private int dialogId; //1 for custom, 2 for alert
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private List<Review> reviewList = new ArrayList<>();
+
+    private ImageView imageView_streetStallImage;
     private TextView
             textView_streetStallName,
             textView_streetStallLocation,
             textView_streetStallFoodType,
             textView_streetStallInfo,
             textView_addReview;
-    private EditText editText_review;
 
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("review");
 
@@ -63,6 +66,7 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
     protected void initViews() {
         streetStall = (StreetStall) getIntent().getSerializableExtra("streetStall");
 
+        imageView_streetStallImage = findViewById(R.id.imageView_streetStallImage);
         textView_streetStallName = findViewById(R.id.textView_streetStallName);
         textView_streetStallLocation = findViewById(R.id.textView_streetStallLocation);
         textView_streetStallFoodType = findViewById(R.id.textView_streetStallFoodType);
@@ -75,6 +79,7 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
         }
 
 
+        Glide.with(this).load(streetStall.getStreetStallImageUrl()).into(imageView_streetStallImage);
         textView_streetStallName.setText(streetStall.getStreetStallName());
         textView_streetStallLocation.setText(streetStall.getStreetStallLocation());
         if (!streetStall.isVegetarian()) {
@@ -127,15 +132,8 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
-                        case R.id.item_add:
-                            Util.showToast(StreetStallDetailActivity.this, streetStall.getStreetStallName() + " : " + menuItem.getTitle());
-                            break;
-                        case R.id.item_edit:
-                            Util.showToast(StreetStallDetailActivity.this, streetStall.getStreetStallName() + " : " + menuItem.getTitle());
-                            break;
                         case R.id.item_delete:
                             showAlertDialog("Are you sure to delete this review", review);
-                            Util.showToast(StreetStallDetailActivity.this, streetStall.getStreetStallName() + " : " + menuItem.getTitle());
                             break;
                     }
                     return true;
@@ -144,11 +142,9 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
             popup.show();
 
         }
-
     }
 
     private void showAlertDialog(String title, final Review review) {
-        dialogId = 2;
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setCancelable(false)
                 .setTitle(title)
@@ -192,33 +188,40 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
     }
 
     private void showCustomDialog(int layoutId) {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(layoutId, null);
-        alertDialog.setView(view)
-                .setCancelable(true)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String reviewId = databaseReference.push().getKey();
-                        Review review = new Review(reviewId, user.getUserName(), editText_review.getText().toString(), 0.0f, streetStall.getStreetStallId());
-                        fireBaseDb.insert(databaseReference, reviewId, review);
-
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
+        builder.setView(view).setCancelable(true);
+        final AlertDialog customDialog = builder.create();
+        customDialog.show();
 
 
-        editText_review = view.findViewById(R.id.editText_review);
+        final EditText editText_review = view.findViewById(R.id.editText_review);
+        TextView textView_add = view.findViewById(R.id.textView_add);
+        TextView textView_cancel = view.findViewById(R.id.textView_cancel);
 
+        textView_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(editText_review.getText().toString())) {
+                    Util.showToast(v.getContext(), "Input fields shouldn't be empty....");
+                } else {
+                    String reviewId = databaseReference.push().getKey();
+                    Review review = new Review(reviewId, user.getUserName(), editText_review.getText().toString(), 0.0f, streetStall.getStreetStallId());
+                    fireBaseDb.insert(databaseReference, reviewId, review);
 
-        alertDialog.show();
+                    customDialog.dismiss();
+                }
+            }
+        });
+
+        textView_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+            }
+        });
+
     }
+
 
 }

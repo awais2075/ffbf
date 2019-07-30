@@ -2,7 +2,10 @@ package com.android.ffbf.activity;
 
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -42,6 +45,24 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         editText_email = findViewById(R.id.editText_email);
         editText_password = findViewById(R.id.editText_password);
 
+        editText_password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (editText_password.getText().toString().length() < 6) {
+                    editText_password.setError("Password should be greater than 6 characters");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         findViewById(R.id.button_signUp).setOnClickListener(this);
         findViewById(R.id.button_signIn).setOnClickListener(this);
     }
@@ -56,20 +77,49 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_signUp:
-                progressDialog.show();
-                UserType userType = UserType.User;
-                if (isAdmin) {
-                    userType = UserType.Critic;
+                if (isValidInput()) {
+                    progressDialog.show();
+                    UserType userType = UserType.User;
+                    if (isAdmin) {
+                        userType = UserType.Critic;
+                    }
+                    auth.signUp(this, this, new User(
+                            "", editText_userName.getText().toString(), editText_email.getText().toString(),
+                            editText_firstName.getText().toString(), editText_surName.getText().toString(), editText_password.getText().toString(), userType));
+
                 }
-                auth.signUp(this, this, new User(
-                        "", editText_userName.getText().toString(), editText_email.getText().toString(),
-                        editText_firstName.getText().toString(), editText_surName.getText().toString(), editText_password.getText().toString(), userType));
                 break;
             case R.id.button_signIn:
                 finish();
                 break;
 
         }
+    }
+
+    private boolean isValidInput() {
+        boolean isValid = true;
+        if (TextUtils.isEmpty(editText_userName.getText().toString())) {
+            editText_userName.setError("Shouldn't be Empty");
+            isValid = false;
+        }
+        if (TextUtils.isEmpty(editText_firstName.getText().toString())) {
+            editText_firstName.setError("Shouldn't be Empty");
+            isValid = false;
+        }
+        if (TextUtils.isEmpty(editText_surName.getText().toString())) {
+            editText_surName.setError("Shouldn't be Empty");
+            isValid = false;
+        }
+        if (TextUtils.isEmpty(editText_email.getText().toString())) {
+            editText_email.setError("Shouldn't be Empty");
+            isValid = false;
+        }
+        if (TextUtils.isEmpty(editText_password.getText().toString())) {
+            editText_password.setError("Shouldn't be Empty");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     @Override

@@ -6,21 +6,35 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".application.MApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.StreetStallDetailActivity"></activity>
-        <activity android:name=".activity.WebActivity" />
-        <activity android:name=".activity.RestaurantDetailActivity" />
-        <activity android:name=".activity.ProfileActivity" />
-        <activity android:name=".activity.SignUpActivity" />
+        <activity
+            android:name=".activity.StreetStallDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.WebActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.RestaurantDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SignUpActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
-        <activity android:name=".activity.SignInActivity">
+        <activity
+            android:name=".activity.SignInActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

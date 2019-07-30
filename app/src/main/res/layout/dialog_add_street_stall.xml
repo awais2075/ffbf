@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:padding="20dp">
 
 
     <ScrollView
@@ -23,7 +23,7 @@
 
             <ImageView
                 android:id="@+id/imageView_stallImage"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/_160sdp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="@id/constraintLayout"
@@ -122,6 +122,30 @@
                 app:layout_constraintLeft_toLeftOf="@id/radioGroup"
                 app:layout_constraintRight_toRightOf="@id/radioGroup"
                 app:layout_constraintTop_toBottomOf="@id/radioGroup" />
+
+            <TextView
+                android:id="@+id/textView_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:text="@string/add"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintLeft_toLeftOf="@id/editText_streetStallInfo"
+                app:layout_constraintRight_toLeftOf="@id/textView_cancel"
+                app:layout_constraintTop_toBottomOf="@id/editText_streetStallInfo" />
+
+            <TextView
+                android:id="@+id/textView_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:text="@string/cancel"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintLeft_toRightOf="@id/textView_add"
+                app:layout_constraintRight_toRightOf="@id/editText_streetStallInfo"
+                app:layout_constraintTop_toBottomOf="@id/editText_streetStallInfo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

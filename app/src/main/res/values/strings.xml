@@ -33,4 +33,5 @@
     <string name="non_vegetarian">Non-Vegetarian</string>
     <string name="stall_info">Stall Info</string>
     <string name="location">Location</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,11 +45,12 @@ public class RestaurantFragment extends BaseFragment implements FirebaseResponse
 
     private FireBaseDb fireBaseDb;
     private User user;
-    private Restaurant restaurant;
     private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
     private TextView textView_noData;
     private FloatingActionButton fab;
+
+    private List<Restaurant> restaurantList = new ArrayList<>();
 
     public RestaurantFragment(FireBaseDb fireBaseDb, User user) {
         this.fireBaseDb = fireBaseDb;
@@ -89,6 +92,7 @@ public class RestaurantFragment extends BaseFragment implements FirebaseResponse
 
     @Override
     public void onSuccess(List<Restaurant> list) {
+        restaurantList = list;
         if (!list.isEmpty()) {
             textView_noData.setVisibility(View.GONE);
         } else {
@@ -107,85 +111,41 @@ public class RestaurantFragment extends BaseFragment implements FirebaseResponse
 
     @Override
     public void onItemClicked(Restaurant restaurant) {
-        Util.showToast(getContext(), restaurant.getRestaurantName());
         startActivity(new Intent(getContext(), RestaurantDetailActivity.class).putExtra("restaurant", restaurant));
-
     }
 
     @Override
-    public void onItemLongClicked(View view, Restaurant rest) {
-        restaurant = rest;
-        PopupMenu popup = new PopupMenu(getContext(), view);
-        //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.option_menu, popup.getMenu());
+    public void onItemLongClicked(View view, final Restaurant restaurant) {
+        if (user.getUserType() == UserType.Admin) {
+            PopupMenu popup = new PopupMenu(getContext(), view);
+            popup.getMenuInflater().inflate(R.menu.option_menu, popup.getMenu());
 
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.item_add:
-                        Util.showToast(getContext(), restaurant.getRestaurantName() + " : " + menuItem.getTitle());
-                        break;
-                    case R.id.item_edit:
-                        Util.showToast(getContext(), restaurant.getRestaurantName() + " : " + menuItem.getTitle());
-                        break;
-                    case R.id.item_delete:
-                        Util.showToast(getContext(), restaurant.getRestaurantName() + " : " + menuItem.getTitle());
-                        showAlertDialog("Are you sure to Delete this Restaurant...");
-                        break;
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.item_delete:
+                            showAlertDialog("Are you sure to delete this Restaurant", restaurant);
+                            break;
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
-        popup.show();
-    }
+            });
+            popup.show();
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.fab:
-                showCustomDialog(R.layout.dialog_add_restaurant);
-                break;
         }
     }
 
-    private void showCustomDialog(int layoutId) {
-        AlertDialog.Builder customDialog = new AlertDialog.Builder(getContext());
-        View view = getLayoutInflater().inflate(layoutId, null);
-        final EditText editText_restaurantName = view.findViewById(R.id.editText_restaurantName);
-        final EditText editText_restaurantInfo = view.findViewById(R.id.editText_restaurantInfo);
-
-        customDialog.setView(view)
-                .setCancelable(true)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String restaurantId = databaseReference.push().getKey();
-                        Restaurant restaurant = new Restaurant(restaurantId, editText_restaurantName.getText().toString(), editText_restaurantInfo.getText().toString());
-                        fireBaseDb.insert(databaseReference, restaurantId, restaurant);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-
-
-        customDialog.show();
-    }
-
-
-    private void showAlertDialog(String title) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+    private void showAlertDialog(String title, final Restaurant restaurant) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
         alertDialog.setCancelable(false)
                 .setTitle(title)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         fireBaseDb.delete(databaseReference, restaurant.getRestaurantId(), restaurant);
+
+                        //delete all reviews associate with this
                         dialog.dismiss();
                     }
                 })
@@ -200,4 +160,63 @@ public class RestaurantFragment extends BaseFragment implements FirebaseResponse
     }
 
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab:
+                showCustomDialog(R.layout.dialog_add_restaurant);
+                break;
+        }
+    }
+
+
+    private void showCustomDialog(final int layoutId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View view = getLayoutInflater().inflate(layoutId, null);
+        final EditText editText_restaurantName = view.findViewById(R.id.editText_restaurantName);
+        final EditText editText_restaurantInfo = view.findViewById(R.id.editText_restaurantInfo);
+        final TextView textView_add = view.findViewById(R.id.textView_add);
+        final TextView textView_cancel = view.findViewById(R.id.textView_cancel);
+        builder.setView(view)
+                .setCancelable(true);
+
+        final AlertDialog customDialog = builder.create();
+        customDialog.show();
+
+
+        textView_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String restaurantId = databaseReference.push().getKey();
+                Restaurant restaurant = new Restaurant(restaurantId, editText_restaurantName.getText().toString(), editText_restaurantInfo.getText().toString());
+
+                if (TextUtils.isEmpty(editText_restaurantName.getText().toString()) || TextUtils.isEmpty(editText_restaurantInfo.getText().toString())) {
+                    Util.showToast(getContext(), "Input fields shouldn't be empty....");
+                } else {
+                    if (!isRestaurantAlreadyExists(restaurant.getRestaurantName().trim())) {
+                        fireBaseDb.insert(databaseReference, restaurantId, restaurant);
+                        customDialog.dismiss();
+                    } else {
+                        Util.showToast(getContext(), "Restaurant Already Exists");
+                    }
+                }
+            }
+        });
+        textView_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+            }
+        });
+    }
+
+
+    private boolean isRestaurantAlreadyExists(String restaurantName) {
+        for (int i = 0; i < restaurantList.size(); i++) {
+            if (restaurantList.get(i).getRestaurantName().equalsIgnoreCase(restaurantName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

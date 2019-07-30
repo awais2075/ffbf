@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
@@ -51,8 +52,10 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_signIn:
-                progressDialog.show();
-                auth.signIn(this, this, editText_email.getText().toString(), editText_password.getText().toString());
+                if (isValidInput()) {
+                    progressDialog.show();
+                    auth.signIn(this, this, editText_email.getText().toString(), editText_password.getText().toString());
+                }
                 break;
             case R.id.button_signUp:
                 editText_email.setText("");
@@ -61,6 +64,20 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                 break;
 
         }
+    }
+
+    private boolean isValidInput() {
+        boolean isValid = true;
+        if (TextUtils.isEmpty(editText_email.getText().toString())) {
+            editText_email.setError("Shouldn't be Empty");
+            isValid = false;
+        }
+
+        if (TextUtils.isEmpty(editText_password.getText().toString())) {
+            editText_password.setError("Shouldn't be Empty");
+            isValid = false;
+        }
+        return isValid;
     }
 
 

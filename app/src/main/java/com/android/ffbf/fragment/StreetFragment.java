@@ -19,11 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -62,7 +66,7 @@ import static android.app.Activity.RESULT_OK;
 public class StreetFragment extends BaseFragment implements ItemClickListener<StreetStall>, FirebaseResponse {
 
     private ImageView imageView_stallImage;
-
+    private TextView textView_uploadImage;
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
@@ -116,7 +120,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
 
     private boolean isStreetStallAlreadyExists(String streetStallName) {
         for (int i = 0; i < streetStallList.size(); i++) {
-            if (streetStallList.get(i).getStreetStallName().equals(streetStallName)) {
+            if (streetStallList.get(i).getStreetStallName().equalsIgnoreCase(streetStallName)) {
                 return true;
             }
         }
@@ -168,6 +172,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
     }
 
     private void uploadStreetStall(StreetStall streetStall) {
+        streetStall.setStreetStallInfo(getString(R.string.dummy_text));
         fireBaseDb.insert(databaseReference, streetStall.getStreetStallId(), streetStall);
     }
 
@@ -181,7 +186,6 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
             case R.id.imageView_stallImage:
                 if (permission.checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     openFileChooser();
-                    Util.showToast(getActivity(), "Already Permitted");
                 } else {
                     requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Constants.PERMISSION_CODE);
                 }
@@ -191,11 +195,11 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
 
     private void showCustomDialog(int layoutId) {
 
-        AlertDialog.Builder customDialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View view = getLayoutInflater().inflate(layoutId, null);
 
         imageView_stallImage = view.findViewById(R.id.imageView_stallImage);
-        TextView textView_uploadImage = view.findViewById(R.id.textView_uploadImage);
+        textView_uploadImage = view.findViewById(R.id.textView_uploadImage);
 
         final EditText editText_streetStallName = view.findViewById(R.id.editText_stallName);
         final EditText editText_streetStallLocation = view.findViewById(R.id.editText_stallLocation);
@@ -203,41 +207,51 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
 
         final RadioButton radioButton_veg = view.findViewById(R.id.radioButton_veg);
 
+        final TextView textView_add = view.findViewById(R.id.textView_add);
+        final TextView textView_cancel = view.findViewById(R.id.textView_cancel);
+
+
+        builder.setView(view)
+                .setCancelable(true);
+
+        final AlertDialog customDialog = builder.create();
+        customDialog.show();
+
         textView_uploadImage.setOnClickListener(this);
         imageView_stallImage.setOnClickListener(this);
 
-        customDialog.setView(view)
-                .setCancelable(true)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (!isStreetStallAlreadyExists(editText_streetStallName.getText().toString())) {
 
-                            StreetStall streetStall = new StreetStall(
-                                    databaseReference.push().getKey(),
-                                    editText_streetStallName.getText().toString().toLowerCase().replace(' ', '_'),
-                                    editText_streetStallName.getText().toString(), editText_streetStallLocation.getText().toString(),
-                                    radioButton_veg.isChecked(),
-                                    editText_streetStallInfo.getText().toString());
-                            uploadImage(streetStall);
+        textView_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(editText_streetStallName.getText().toString()) || TextUtils.isEmpty(editText_streetStallLocation.getText().toString()) || TextUtils.isEmpty(editText_streetStallInfo.getText().toString()) || imageUri == null)
+                {
+                    Util.showToast(getContext(), "Input fields shouldn't be empty....");
+                } else{
+                    if (!isStreetStallAlreadyExists(editText_streetStallName.getText().toString().trim())) {
+
+                        StreetStall streetStall = new StreetStall(
+                                databaseReference.push().getKey(),
+                                editText_streetStallName.getText().toString().toLowerCase().replace(' ', '_'),
+                                editText_streetStallName.getText().toString(), editText_streetStallLocation.getText().toString(),
+                                radioButton_veg.isChecked(),
+                                editText_streetStallInfo.getText().toString());
+                        uploadImage(streetStall);
 
 
-                            dialog.dismiss();
-                        } else {
-                            Util.showToast(getContext(), "Street Stall Already Exists");
-                        }
+                        customDialog.dismiss();
+                    } else {
+                        Util.showToast(getContext(), "Street Stall Already Exists");
                     }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-
-
-        customDialog.show();
+                }
+            }
+        });
+        textView_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
+            }
+        });
 
     }
 
@@ -247,10 +261,47 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
     }
 
     @Override
-    public void onItemLongClicked(View view, StreetStall streetStall) {
+    public void onItemLongClicked(View view, final StreetStall streetStall) {
+        if (user.getUserType() == UserType.Admin) {
+            PopupMenu popup = new PopupMenu(getContext(), view);
+            popup.getMenuInflater().inflate(R.menu.option_menu, popup.getMenu());
 
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.item_delete:
+                            showAlertDialog("Are you sure to delete this Street Stall", streetStall);
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popup.show();
+
+        }
     }
 
+    private void showAlertDialog(String title, final StreetStall streetStall) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setCancelable(false)
+                .setTitle(title)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        fireBaseDb.delete(databaseReference, streetStall.getStreetStallId(), streetStall);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -260,8 +311,18 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
                 openFileChooser();
             } else if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 Util.showToast(getContext(), "Some Features might not work");
+
+                openAppSettings();
             }
         }
+    }
+
+    private void openAppSettings() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
     }
 
     private void openFileChooser() {
@@ -279,6 +340,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imageUri);
                 imageView_stallImage.setImageBitmap(bitmap);
+                textView_uploadImage.setVisibility(View.GONE);
 
             } catch (IOException e) {
                 e.printStackTrace();

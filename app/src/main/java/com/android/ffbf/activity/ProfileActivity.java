@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +18,7 @@ import com.android.ffbf._interface.ItemClickListener;
 import com.android.ffbf.adapter.RecyclerViewAdapter;
 import com.android.ffbf.decoration.MyDividerItemDecoration;
 import com.android.ffbf.model.User;
+import com.android.ffbf.util.Util;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
@@ -81,10 +83,12 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
     }
 
     protected void showCustomDialog(int layoutId, User selectedUser) {
-        AlertDialog.Builder customDialog = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(layoutId, null);
-        customDialog.setView(view)
-                .setCancelable(true);
+        builder.setView(view).setCancelable(true);
+
+        final AlertDialog customDialog = builder.create();
+        customDialog.show();
 
         textView_userName = view.findViewById(R.id.textView_userName);
         textView_userEmail = view.findViewById(R.id.textView_email);
@@ -100,7 +104,20 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
             editText_surName.setText(selectedUser.getUserSurName());
 
             Button button_update = view.findViewById(R.id.button_update);
-            button_update.setOnClickListener(this);
+            button_update.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (TextUtils.isEmpty(editText_firstName.getText().toString()) || TextUtils.isEmpty(editText_surName.getText().toString())) {
+                        Util.showToast(v.getContext(), "Input fields shouldn't be Empty...");
+                    } else {
+                        user.setUserFirstName(editText_firstName.getText().toString());
+                        user.setUserSurName(editText_surName.getText().toString());
+                        fireBaseDb.update(FirebaseDatabase.getInstance().getReference("user"), user.getUserId(), user);
+
+                        customDialog.dismiss();
+                    }
+                }
+            });
         } else {
             textView_firstName = view.findViewById(R.id.textView_firstName);
             textView_surName = view.findViewById(R.id.textView_surName);
@@ -108,8 +125,6 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
             textView_firstName.setText(selectedUser.getUserFirstName());
             textView_surName.setText(selectedUser.getUserSurName());
         }
-
-        customDialog.create().show();
     }
 
     @Override
@@ -119,11 +134,6 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_update:
-                user.setUserFirstName(editText_firstName.getText().toString());
-                user.setUserSurName(editText_surName.getText().toString());
-                fireBaseDb.update(FirebaseDatabase.getInstance().getReference("user"), user.getUserId(), user);
-                break;
         }
     }
 }

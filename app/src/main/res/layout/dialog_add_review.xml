@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:padding="20dp">
 
 
     <ImageView
@@ -45,5 +45,29 @@
         app:layout_constraintStart_toStartOf="@+id/textView_heading"
         app:layout_constraintTop_toBottomOf="@+id/textView_heading" />
 
+
+    <TextView
+        android:id="@+id/textView_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:text="@string/add"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintLeft_toLeftOf="@id/editText_review"
+        app:layout_constraintRight_toLeftOf="@id/textView_cancel"
+        app:layout_constraintTop_toBottomOf="@id/editText_review" />
+
+    <TextView
+        android:id="@+id/textView_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:text="@string/cancel"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintLeft_toRightOf="@id/textView_add"
+        app:layout_constraintRight_toRightOf="@id/editText_review"
+        app:layout_constraintTop_toBottomOf="@id/editText_review" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

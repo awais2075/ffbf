@@ -6,9 +6,12 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -32,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class RestaurantDetailActivity extends BaseActivity implements
-        View.OnClickListener, DatePickerDialog.OnDateSetListener, ItemClickListener<Review>, DialogInterface.OnClickListener {
+        View.OnClickListener, DatePickerDialog.OnDateSetListener, ItemClickListener<Review> {
 
     private Restaurant restaurant;
     private List<Review> reviewList = new ArrayList<>();
@@ -44,8 +47,6 @@ public class RestaurantDetailActivity extends BaseActivity implements
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
 
-    private EditText editText_review;
-    private boolean isToAdd = false;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("review");
 
     @Override
@@ -56,7 +57,7 @@ public class RestaurantDetailActivity extends BaseActivity implements
 
     @Override
     protected int getView() {
-        return R.layout.layout_test;
+        return R.layout.activity_restaurant_detail;
     }
 
     @Override
@@ -129,7 +130,7 @@ public class RestaurantDetailActivity extends BaseActivity implements
         switch (view.getId()) {
             case R.id.textView_addReview:
                 if (!isAlreadyReviewed()) {
-                    showAlertDialog();
+                    showCustomDialog(R.layout.dialog_add_review);
                 } else {
                     Util.showToast(this, "You've already reviewed...");
                 }
@@ -162,7 +163,7 @@ public class RestaurantDetailActivity extends BaseActivity implements
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-        Util.showToast(this, "Selected Date is " + dayOfMonth + " : " + month + " : " + year);
+        //Util.showToast(this, "Selected Date is " + dayOfMonth + " : " + month + " : " + year);
 
         String date = year + "-" + (++month) + "-" + dayOfMonth + "%" + year;
         String webUrl = "https://www.opentable.com/s/?covers=2&dateTime=" + date + "%3A00&metroId=72&regionIds=5316&pinnedRids%5B0%5D=87967&enableSimpleCuisines=true&includeTicketedAvailability=true&pageType=0";
@@ -180,48 +181,81 @@ public class RestaurantDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onItemLongClicked(View view, Review review) {
+    public void onItemLongClicked(View view, final Review review) {
+        if (review.getReviewerName().equals(user.getUserName()) || user.getUserType() == UserType.Admin) {
+            PopupMenu popup = new PopupMenu(this, view);
+            popup.getMenuInflater().inflate(R.menu.option_menu, popup.getMenu());
 
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.item_delete:
+                            showAlertDialog("Are you sure to delete this review", review);
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popup.show();
+
+        }
     }
 
-    private void showAlertDialog() {
+    private void showAlertDialog(String title, final Review review) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.dialog_add_review, null);
-        alertDialog.setView(view)
-                .setCancelable(true)
-                .setPositiveButton("Add", this)
-                .setNegativeButton("Cancel", this)
+        alertDialog.setCancelable(false)
+                .setTitle(title)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        fireBaseDb.delete(databaseReference, review.getReviewId(), review);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
                 .create();
-
-
-        editText_review = view.findViewById(R.id.editText_review);
-
-
         alertDialog.show();
     }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case -1: {
-                Util.showToast(this, "Positive");
-                String reviewId = databaseReference.push().getKey();
-                Review review = new Review(reviewId, user.getUserName(), editText_review.getText().toString(), 2.5f, restaurant.getRestaurantId());
-                fireBaseDb.insert(databaseReference, reviewId, review);
+    private void showCustomDialog(int layoutId) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(layoutId, null);
+        builder.setView(view).setCancelable(true);
+        final AlertDialog customDialog = builder.create();
+        customDialog.show();
+
+
+        final EditText editText_review = view.findViewById(R.id.editText_review);
+        TextView textView_add = view.findViewById(R.id.textView_add);
+        TextView textView_cancel = view.findViewById(R.id.textView_cancel);
+
+        textView_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(editText_review.getText().toString())) {
+                    Util.showToast(v.getContext(), "Input fields shouldn't be empty....");
+                } else {
+                    String reviewId = databaseReference.push().getKey();
+                    Review review = new Review(reviewId, user.getUserName(), editText_review.getText().toString(), 0.0f, restaurant.getRestaurantId());
+                    fireBaseDb.insert(databaseReference, reviewId, review);
+
+                    customDialog.dismiss();
+                }
             }
-            break;
-            case -2: {
-                Util.showToast(this, "Negative");
+        });
+
+        textView_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDialog.dismiss();
             }
-            break;
-            case -3: {
-                Util.showToast(this, "Neutral");
-            }
-            break;
-        }
-        dialog.dismiss();
+        });
 
     }
-
-
 }
