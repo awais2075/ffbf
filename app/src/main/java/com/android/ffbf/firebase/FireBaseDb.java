@@ -14,6 +14,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class required to perform Firebase Database Operations
+ * insert
+ * delete
+ * update
+ * edit
+ */
 public class FireBaseDb implements FirebaseOperations, DatabaseReference.CompletionListener {
 
     private FirebaseResponse firebaseResponse;

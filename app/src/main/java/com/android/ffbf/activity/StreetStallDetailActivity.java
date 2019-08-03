@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Activity to view Details of Street Stall selected by user from List
+ */
 public class StreetStallDetailActivity extends BaseActivity implements ItemClickListener<Review>, View.OnClickListener {
 
     private StreetStall streetStall;
@@ -57,11 +60,17 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
 
     }
 
+    /**
+     * Getting View associated with this Activity i.e. xml layout
+     */
     @Override
     protected int getView() {
         return R.layout.activity_street_stall_detail;
     }
 
+    /**
+     * Initializing Views defined in xml associated with this Activity
+     */
     @Override
     protected void initViews() {
         streetStall = (StreetStall) getIntent().getSerializableExtra("streetStall");
@@ -79,6 +88,7 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
         }
 
 
+        /**Image Loading Library*/
         Glide.with(this).load(streetStall.getStreetStallImageUrl()).into(imageView_streetStallImage);
         textView_streetStallName.setText(streetStall.getStreetStallName());
         textView_streetStallLocation.setText(streetStall.getStreetStallLocation());
@@ -100,6 +110,9 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
 
     }
 
+    /**
+     * Declared in Interface FirebaseOperations to get List of Items whenever view function is called
+     */
     @Override
     public void onSuccess(List list) {
         reviewList = list;
@@ -112,16 +125,28 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
         recyclerView.setAdapter(adapter);
     }
 
+    /**
+     * Declared in Interfaces FirebaseOperations
+     * to get Failure messages
+     */
     @Override
     public void onFailure(String message) {
         Util.showToast(this, message);
-
     }
 
+    /**
+     * Return Object whenever user clicks an item from List(RecyclerView)
+     */
     @Override
     public void onItemClicked(Review review) {
     }
 
+    /**
+     * Returns object with view whenever user make a long click on item from List(RecyclerView)
+     *
+     * Show Popup Menu on LongClicked
+     * to Delete specific item
+     */
     @Override
     public void onItemLongClicked(View view, final Review review) {
         if (review.getReviewerName().equals(user.getUserName()) || user.getUserType() == UserType.Admin) {
@@ -144,6 +169,10 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
         }
     }
 
+
+    /**
+     * Add Review Dialog
+     */
     private void showAlertDialog(String title, final Review review) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setCancelable(false)
@@ -165,6 +194,9 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
         alertDialog.show();
     }
 
+    /**
+     * Implementing click listeners of Views that are consuming onClick Event
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -178,6 +210,7 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
         }
     }
 
+
     private boolean isAlreadyReviewed() {
         for (int i = 0; i < reviewList.size(); i++) {
             if (reviewList.get(i).getReviewerName().equals(user.getUserName())) {
@@ -187,6 +220,9 @@ public class StreetStallDetailActivity extends BaseActivity implements ItemClick
         return false;
     }
 
+    /**
+     * Dialog opens whenever user wants to add new Street Stall
+     */
     private void showCustomDialog(int layoutId) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(layoutId, null);

@@ -19,6 +19,11 @@ public class Auth {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
+    /**
+     * SignIn user on the basis of
+     * Email
+     * Password
+     */
     public void signIn(Activity context, final AuthResponse authResponse, String userEmail, String userPassword) {
         firebaseAuth.signInWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(context, new OnCompleteListener<AuthResult>() {
@@ -35,10 +40,18 @@ public class Auth {
                 });
     }
 
+    /**
+     * SignOut user
+     */
     public void signOut() {
         firebaseAuth.signOut();
     }
 
+    /**
+     * Whenever application launches it always checks previous loggedIn user
+     * if it finds, it will logIn from that user (i.e. MainActivity will be launched)
+     * otherwise it will show SignIn Activity
+     */
     public User getCurrentUser() {
         if (firebaseAuth.getCurrentUser() != null) {
             return new User(firebaseAuth.getCurrentUser().getUid());
@@ -46,6 +59,9 @@ public class Auth {
         return null;
     }
 
+    /**
+     * Register a user on the basis of its information defined in User class
+     */
     public void signUp(Activity context, final AuthResponse authResponse, final User user) {
         firebaseAuth.createUserWithEmailAndPassword(user.getUserEmail(), user.getUserPassword())
                 .addOnCompleteListener(context, new OnCompleteListener<AuthResult>() {

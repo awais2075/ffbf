@@ -1,9 +1,7 @@
 package com.android.ffbf.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -11,6 +9,10 @@ import com.android.ffbf.R;
 
 import java.util.List;
 
+
+/**
+ * Activity to show WebView of url containing specific Dates selected by user
+ */
 public class WebActivity extends BaseActivity {
 
     private WebView webView;
@@ -23,11 +25,17 @@ public class WebActivity extends BaseActivity {
 
     }
 
+    /**
+     * Getting View associated with this Activity i.e. xml layout
+     */
     @Override
     protected int getView() {
         return R.layout.activity_web;
     }
 
+    /**
+     * Initializing Views defined in xml associated with this Activity
+     */
     @Override
     protected void initViews() {
         webView = findViewById(R.id.webView);
@@ -42,6 +50,7 @@ public class WebActivity extends BaseActivity {
                 return true;
             }
 
+            /** hide progress dialog when website is ready to view*/
             @Override
             public void onPageFinished(WebView view, String url) {
                 progressDialog.hide();
@@ -51,11 +60,17 @@ public class WebActivity extends BaseActivity {
         webView.loadUrl(getIntent().getStringExtra("webUrl"));
     }
 
+    /**
+     * Not Required for this Activity
+     */
     @Override
     public void onSuccess(List list) {
 
     }
 
+    /**
+     * Not Required for this Activity
+     */
     @Override
     public void onFailure(String message) {
 

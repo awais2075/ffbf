@@ -1,6 +1,5 @@
 package com.android.ffbf.activity;
 
-import androidx.annotation.NonNull;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,14 +11,15 @@ import com.android.ffbf.R;
 import com.android.ffbf._interface.AuthResponse;
 import com.android.ffbf.model.User;
 import com.android.ffbf.util.Util;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+
+/**
+ * Activity for User to SignIn
+ * inorder to use Application
+ */
 public class SignInActivity extends BaseActivity implements View.OnClickListener, AuthResponse {
 
     private EditText editText_email;
@@ -33,11 +33,17 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         onSuccess(auth.getCurrentUser());
     }
 
+    /**
+     * Getting View associated with this Activity i.e. xml layout
+     */
     @Override
     protected int getView() {
         return R.layout.activity_sign_in;
     }
 
+    /**
+     * Initializing Views defined in xml associated with this Activity
+     */
     @Override
     protected void initViews() {
         editText_email = findViewById(R.id.editText_email);
@@ -48,6 +54,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
     }
 
+    /**
+     * Implementing click listeners of Views that are consuming onClick Event
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -66,6 +75,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    /**
+     * Validating Input Values
+     */
     private boolean isValidInput() {
         boolean isValid = true;
         if (TextUtils.isEmpty(editText_email.getText().toString())) {
@@ -81,6 +93,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     }
 
 
+    /**
+     * Declared in Interface AuthResponse to get Specific User on LogIn or Registration
+     */
     @Override
     public void onSuccess(User user) {
         if (user != null) {
@@ -90,6 +105,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    /**
+     * Declared in Interface FirebaseOperations to get List of Items whenever view function is called
+     */
     @Override
     public void onSuccess(List list) {
         editText_email.setText("");
@@ -101,6 +119,10 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         finish();
     }
 
+    /**
+     * Declared in Interfaces AuthResponse & FirebaseOperations
+     * to get Failure messages
+     */
     @Override
     public void onFailure(String message) {
         editText_email.setText("");

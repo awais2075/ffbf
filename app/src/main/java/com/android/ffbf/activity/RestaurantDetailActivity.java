@@ -34,6 +34,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Activity to view Details of Specific Restaurant selected by user
+ */
 public class RestaurantDetailActivity extends BaseActivity implements
         View.OnClickListener, DatePickerDialog.OnDateSetListener, ItemClickListener<Review> {
 
@@ -55,11 +58,17 @@ public class RestaurantDetailActivity extends BaseActivity implements
 
     }
 
+    /**
+     * Getting View associated with this Activity i.e. xml layout
+     */
     @Override
     protected int getView() {
         return R.layout.activity_restaurant_detail;
     }
 
+    /**
+     * Initializing Views defined in xml associated with this Activity
+     */
     @Override
     protected void initViews() {
 
@@ -97,17 +106,11 @@ public class RestaurantDetailActivity extends BaseActivity implements
     private void populateData() {
 
         fireBaseDb.view(databaseReference.orderByChild("restaurantId").equalTo(restaurant.getRestaurantId()), Review.class);
-        /*reviewList.add(new Review("001", "Muhammad Awais Rashid", getString(R.string.review), 2.5f));
-        reviewList.add(new Review("001", "Muhammad Anas Rashid", getString(R.string.review), 4.5f));
-        reviewList.add(new Review("001", "Muhammad Ubaid Rashid", getString(R.string.review), 4.0f));
-        reviewList.add(new Review("001", "Muhammad Ubaid Rashid", getString(R.string.review), 4.0f));
-        reviewList.add(new Review("001", "Muhammad Ubaid Rashid", getString(R.string.review), 3.5f));
-        reviewList.add(new Review("001", "Muhammad Ubaid Rashid", getString(R.string.review), 4.0f));
-        reviewList.add(new Review("001", "Muhammad Ubaid Rashid", getString(R.string.review), 4.0f));
-        reviewList.add(new Review("001", "Muhammad Ubaid Rashid", getString(R.string.review), 4.0f));
-        reviewList.add(new Review("001", "Muhammad Ubaid Rashid", getString(R.string.review), 4.0f));*/
     }
 
+    /**
+     * Declared in Interface FirebaseOperations to get List of Items whenever view function is called
+     */
     @Override
     public void onSuccess(List list) {
         reviewList = list;
@@ -125,6 +128,10 @@ public class RestaurantDetailActivity extends BaseActivity implements
 
     }
 
+
+    /**
+     * Implementing click listeners of Views that are consuming onClick Event
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -163,23 +170,25 @@ public class RestaurantDetailActivity extends BaseActivity implements
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-        //Util.showToast(this, "Selected Date is " + dayOfMonth + " : " + month + " : " + year);
 
         String date = year + "-" + (++month) + "-" + dayOfMonth + "%" + year;
         String webUrl = "https://www.opentable.com/s/?covers=2&dateTime=" + date + "%3A00&metroId=72&regionIds=5316&pinnedRids%5B0%5D=87967&enableSimpleCuisines=true&includeTicketedAvailability=true&pageType=0";
 
         startActivity(new Intent(this, WebActivity.class).putExtra("webUrl", webUrl));
-/*        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webUrl));
-        startActivity(browserIntent);*/
-
     }
 
+    /**
+     * Return Object whenever user clicks an item from List(RecyclerView)
+     */
     @Override
     public void onItemClicked(Review review) {
         review.setReviewRating(5.0f);
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Returns object with view whenever user make a long click on item from List(RecyclerView)
+     */
     @Override
     public void onItemLongClicked(View view, final Review review) {
         if (review.getReviewerName().equals(user.getUserName()) || user.getUserType() == UserType.Admin) {

@@ -98,6 +98,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
         return view;
     }
 
+    /*Initializing Views defined in xml associated with this Fragment*/
     private void initViews(View view) {
         fab = view.findViewById(R.id.fab);
         textView_noData = view.findViewById(R.id.textView_noData);
@@ -255,11 +256,20 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
 
     }
 
+    /**
+     * Return Object whenever user clicks an item from List(RecyclerView)
+     */
     @Override
     public void onItemClicked(StreetStall streetStall) {
         startActivity(new Intent(getContext(), StreetStallDetailActivity.class).putExtra("streetStall", streetStall));
     }
 
+    /**
+     * Returns object with view whenever user make a long click on item from List(RecyclerView)
+     *
+     * Show Popup Menu on LongClicked
+     * to Delete specific item
+     */
     @Override
     public void onItemLongClicked(View view, final StreetStall streetStall) {
         if (user.getUserType() == UserType.Admin) {
@@ -348,6 +358,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
         }
     }
 
+    /*Declared in Interface FirebaseOperations to get List of Items whenever view function is called*/
     @Override
     public void onSuccess(List list) {
         streetStallList = list;

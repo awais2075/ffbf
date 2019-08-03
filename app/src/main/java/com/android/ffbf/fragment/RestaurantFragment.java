@@ -70,6 +70,7 @@ public class RestaurantFragment extends BaseFragment implements FirebaseResponse
         return view;
     }
 
+    /*Initializing Views defined in xml associated with this Fragment*/
     private void initViews(View view) {
 
         fab = view.findViewById(R.id.fab);
@@ -90,6 +91,7 @@ public class RestaurantFragment extends BaseFragment implements FirebaseResponse
         fireBaseDb.view(databaseReference.orderByChild("restaurantName"), Restaurant.class, this);
     }
 
+    /*Declared in Interface FirebaseOperations to get List of Items whenever view function is called*/
     @Override
     public void onSuccess(List<Restaurant> list) {
         restaurantList = list;
@@ -104,16 +106,26 @@ public class RestaurantFragment extends BaseFragment implements FirebaseResponse
 
     }
 
-    @Override
+    /*Declared in Interfaces FirebaseOperations
+     * to get Failure messages*/@Override
     public void onFailure(String message) {
         Util.showToast(getContext(), message);
     }
 
+    /**
+     * Return Object whenever user clicks an item from List(RecyclerView)
+     */
     @Override
     public void onItemClicked(Restaurant restaurant) {
         startActivity(new Intent(getContext(), RestaurantDetailActivity.class).putExtra("restaurant", restaurant));
     }
 
+    /**
+     * Returns object with view whenever user make a long click on item from List(RecyclerView)
+     *
+     * Show Popup Menu on LongClicked
+     * to Delete specific item
+     */
     @Override
     public void onItemLongClicked(View view, final Restaurant restaurant) {
         if (user.getUserType() == UserType.Admin) {

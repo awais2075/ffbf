@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 
 
+/**
+ * Runtime permissions specifically required for
+ * Android Devices having Version Marshmallow & Above
+ */
 public class Permission {
     private Context context;
     private int permissionCode;

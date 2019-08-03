@@ -18,6 +18,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+
+/**
+ * Activity, where user can register itself (mandatory to user application)
+ */
 public class SignUpActivity extends BaseActivity implements View.OnClickListener, AuthResponse {
 
 
@@ -37,6 +41,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         isAdmin = getIntent().getBooleanExtra("isAdmin", false);
     }
 
+    /**
+     * Initializing Views defined in xml associated with this Activity
+     */
     @Override
     protected void initViews() {
         editText_userName = findViewById(R.id.editText_userName);
@@ -67,12 +74,18 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         findViewById(R.id.button_signIn).setOnClickListener(this);
     }
 
+    /**
+     * Getting View associated with this Activity i.e. xml layout
+     */
     @Override
     protected int getView() {
         return R.layout.activity_sign_up;
     }
 
 
+    /**
+     * Implementing click listeners of Views that are consuming onClick Event
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -96,6 +109,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    /**
+     * Validating Input values on Registration
+     */
     private boolean isValidInput() {
         boolean isValid = true;
         if (TextUtils.isEmpty(editText_userName.getText().toString())) {
@@ -122,12 +138,18 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         return isValid;
     }
 
+    /**
+     * Declared in Interface FirebaseOperations to get List of Items whenever view function is called
+     */
     @Override
     public void onSuccess(User user) {
         fireBaseDb.insert(FirebaseDatabase.getInstance().getReference("user"), user.getUserId(), user);
         fireBaseDb.view(FirebaseDatabase.getInstance().getReference("user").orderByChild(user.getUserId()), User.class);
     }
 
+    /**
+     * Declared in Interface FirebaseOperations to get List of Items whenever view function is called
+     */
     @Override
     public void onSuccess(List list) {
         progressDialog.hide();
@@ -137,6 +159,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         finish();
     }
 
+    /**
+     * Declared in Interfaces AuthResponse & FirebaseOperations
+     * to get Failure messages
+     */
     @Override
     public void onFailure(String message) {
         editText_userName.setText("");

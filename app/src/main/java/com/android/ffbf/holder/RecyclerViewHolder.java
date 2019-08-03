@@ -17,6 +17,9 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+/**
+ * RecyclerView Holder for RecyclerView Adapter required to bind data of every item in list to its view
+ */
 public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     private ItemClickListener itemClickListener;
     private List anyList;
@@ -61,6 +64,9 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.
         }
     }
 
+    /**
+     * Returns object with view whenever user make a long click on item from List(RecyclerView)
+     */
     @Override
     public boolean onLongClick(View view) {
         itemClickListener.onItemLongClicked(view, anyList.get(getAdapterPosition()));

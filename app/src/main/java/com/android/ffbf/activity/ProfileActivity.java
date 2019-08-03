@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+/*Activity to view Profiles of Users(users, admin, critics)*/
 public class ProfileActivity extends BaseActivity implements ItemClickListener<User>, DialogInterface.OnClickListener, View.OnClickListener {
 
     private RecyclerView recyclerView;
@@ -44,11 +45,14 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
 
     }
 
+    /*Getting View associated with this Activity i.e. xml layout*/
     @Override
     protected int getView() {
         return R.layout.activity_profile;
     }
 
+
+    /*Initializing Views defined in xml associated with this Activity*/
     @Override
     protected void initViews() {
         recyclerView = findViewById(R.id.recyclerView);
@@ -57,6 +61,7 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
         recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
     }
 
+    /*Declared in Interface FirebaseOperations to get List of Items whenever view function is called*/
     @Override
     public void onSuccess(List list) {
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, R.layout.item_profile, list);
@@ -68,6 +73,9 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
 
     }
 
+    /**
+     * Return Object whenever user clicks an item from List(RecyclerView)
+     */
     @Override
     public void onItemClicked(User temUser) {
         if (user.getUserId().equals(temUser.getUserId())) {
@@ -131,6 +139,7 @@ public class ProfileActivity extends BaseActivity implements ItemClickListener<U
     public void onClick(DialogInterface dialog, int which) {
     }
 
+    /*Implementing click listeners of Views that are consuming onClick Event*/
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
