@@ -1,10 +1,12 @@
 package com.android.ffbf.holder;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.ffbf.R;
@@ -13,7 +15,12 @@ import com.android.ffbf.model.Restaurant;
 import com.android.ffbf.model.Review;
 import com.android.ffbf.model.StreetStall;
 import com.android.ffbf.model.User;
+import com.android.ffbf.util.Util;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -52,7 +59,19 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.
             ((TextView) itemView.findViewById(R.id.textView_fullName)).setText(((User) model).getUserFirstName() + " " + ((User) model).getUserSurName());
             ((TextView) itemView.findViewById(R.id.textView_userType)).setText(((User) model).getUserType().toString());
         } else if (model instanceof StreetStall) {
-            Glide.with(itemView.getContext()).load(((StreetStall) model).getStreetStallImageUrl()).into((ImageView) itemView.findViewById(R.id.imageView_streetStallImage));
+            Glide.with(itemView.getContext()).load(((StreetStall) model).getStreetStallImageUrl()).listener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    Util.showToast(itemView.getContext(), e.getMessage());
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    return false;
+                }
+            })
+                    .into((ImageView) itemView.findViewById(R.id.imageView_streetStallImage));
             ((TextView) itemView.findViewById(R.id.textView_streetStallName)).setText(((StreetStall) model).getStreetStallName());
             ((TextView) itemView.findViewById(R.id.textView_streetStallLocation)).setText(((StreetStall) model).getStreetStallLocation());
 

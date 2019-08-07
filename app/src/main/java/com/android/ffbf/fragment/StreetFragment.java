@@ -79,6 +79,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
     private FireBaseDb fireBaseDb;
     private User user;
     private DatabaseReference databaseReference;
+    private FirebaseStorage firebaseStorage;
 
     public StreetFragment(FireBaseDb fireBaseDb, User user) {
         this.fireBaseDb = fireBaseDb;
@@ -92,8 +93,9 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
         View view = inflater.inflate(R.layout.fragment_street, container, false);
 
         permission = new Permission(getContext(), Constants.PERMISSION_CODE);
-        databaseReference = FirebaseDatabase.getInstance().getReference("streetStall");
 
+        databaseReference = FirebaseDatabase.getInstance().getReference("streetStall");
+        firebaseStorage = FirebaseStorage.getInstance();
         initViews(view);
         return view;
     }
@@ -134,8 +136,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
         progressDialog.show();
         progressDialog.setCancelable(false);
 
-
-        final StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images/" + streetStall.getStreetStallImageUrl());
+        final StorageReference storageReference = firebaseStorage.getReference().child("images/" + streetStall.getStreetStallImageUrl());
         storageReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -147,7 +148,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
                     @Override
                     public void onSuccess(Uri uri) {
 
-                        streetStall.setStreetStallImageUrl(imageUri.toString());
+                        streetStall.setStreetStallImageUrl(uri.toString());
                         uploadStreetStall(streetStall);
 
                     }
@@ -173,7 +174,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
     }
 
     private void uploadStreetStall(StreetStall streetStall) {
-        streetStall.setStreetStallInfo(getString(R.string.dummy_text));
+        //streetStall.setStreetStallInfo(getString(R.string.dummy_text));
         fireBaseDb.insert(databaseReference, streetStall.getStreetStallId(), streetStall);
     }
 
@@ -225,10 +226,9 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
         textView_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(editText_streetStallName.getText().toString()) || TextUtils.isEmpty(editText_streetStallLocation.getText().toString()) || TextUtils.isEmpty(editText_streetStallInfo.getText().toString()) || imageUri == null)
-                {
+                if (TextUtils.isEmpty(editText_streetStallName.getText().toString()) || TextUtils.isEmpty(editText_streetStallLocation.getText().toString()) || TextUtils.isEmpty(editText_streetStallInfo.getText().toString()) || imageUri == null) {
                     Util.showToast(getContext(), "Input fields shouldn't be empty....");
-                } else{
+                } else {
                     if (!isStreetStallAlreadyExists(editText_streetStallName.getText().toString().trim())) {
 
                         StreetStall streetStall = new StreetStall(
@@ -266,7 +266,7 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
 
     /**
      * Returns object with view whenever user make a long click on item from List(RecyclerView)
-     *
+     * <p>
      * Show Popup Menu on LongClicked
      * to Delete specific item
      */
@@ -300,6 +300,17 @@ public class StreetFragment extends BaseFragment implements ItemClickListener<St
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         fireBaseDb.delete(databaseReference, streetStall.getStreetStallId(), streetStall);
+                        firebaseStorage.getReferenceFromUrl(streetStall.getStreetStallImageUrl()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Util.showToast(getContext(), "Image File Deleted");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Util.showToast(getContext(), "Image Deleted Failure : " + e.getMessage());
+                            }
+                        });
                         dialog.dismiss();
                     }
                 })
